@@ -5353,7 +5353,7 @@ nco_sph_plg_area /* [fnc] Compute area of spherical polygon */
 	bnd_vld_idx=bnd_srt_idx+bnd_idx;
 	vrt_vld[bnd_vld_nbr]=bnd_vld_idx;
 	bnd_vld_nbr++;
-	if(nco_dbg_lvl_get() >= nco_dbg_io) (void)fprintf(stdout,"%s: DEBUG %s reports centroidal decomposition col_idx=%lu, bnd_nbr=%d, bnd_idx=%ld, bnd_vld_idx=%ld, bnd_vld_nbr=%ld\n",nco_prg_nm_get(),fnc_nm,col_idx,bnd_nbr,bnd_idx,bnd_vld_idx,bnd_vld_nbr);
+	//if(nco_dbg_lvl_get() >= nco_dbg_io) (void)fprintf(stdout,"%s: DEBUG %s reports centroidal decomposition col_idx=%lu, bnd_nbr=%d, bnd_idx=%ld, bnd_vld_idx=%ld, bnd_vld_nbr=%ld\n",nco_prg_nm_get(),fnc_nm,col_idx,bnd_nbr,bnd_idx,bnd_vld_idx,bnd_vld_nbr);
 	assert(bnd_vld_nbr <= bnd_nbr);
 	lat_ctr+=lat_bnd[bnd_vld_idx];
 	lon_ctr+=lon_bnd[bnd_vld_idx];
@@ -5489,7 +5489,7 @@ nco_sph_plg_area /* [fnc] Compute area of spherical polygon */
       idx_b=b_idx[tri_idx];
       idx_c=c_idx[tri_idx];
 
-      if(nco_dbg_lvl_get() >= nco_dbg_io) (void)fprintf(stdout,"%s: DEBUG %s reports triangle vertices: col_idx=%lu, tri_idx=%d, idx_a=%ld, idx_b=%ld, idx_c=%ld\n",nco_prg_nm_get(),fnc_nm,col_idx,tri_idx,idx_a,idx_b,idx_c);
+      //if(nco_dbg_lvl_get() >= nco_dbg_io) (void)fprintf(stdout,"%s: DEBUG %s reports triangle vertices: col_idx=%lu, tri_idx=%d, idx_a=%ld, idx_b=%ld, idx_c=%ld\n",nco_prg_nm_get(),fnc_nm,col_idx,tri_idx,idx_a,idx_b,idx_c);
 
       /* Compute interior angle/great circle arc a for first triangle; subsequent triangles recycle previous arc c */
       if(tri_idx == 0){
@@ -5589,7 +5589,7 @@ nco_sph_plg_area /* [fnc] Compute area of spherical polygon */
 	double tan_hlf_a_tan_hlf_b; /* [frc] Product of tangents of one-half of nearly equal canoncal sides */
 	double xcs_sph_hlf_tan; /* [frc] Tangent of one-half the spherical excess */
 	/* Compute area using SAS formula */
-	(void)fprintf(stdout,"%s: INFO %s reports col_idx = %li triangle %d is ill-conditioned. Using SAS formula instead of L'Huilier's formula for spherical excess (and cell area) to avoid low precision.\n",nco_prg_nm_get(),fnc_nm,col_idx,tri_idx);
+	// (void)fprintf(stdout,"%s: INFO %s reports col_idx = %li triangle %d is ill-conditioned. Using SAS formula instead of L'Huilier's formula for spherical excess (and cell area) to avoid low precision.\n",nco_prg_nm_get(),fnc_nm,col_idx,tri_idx);
 	/* Transform sides into canonical order for formula */
 	if(flg_sas_hlf_c){
 	  ngl_ltr_a=ngl_a;
@@ -5647,7 +5647,7 @@ nco_sph_plg_area /* [fnc] Compute area of spherical polygon */
 	 lat_bnd_rdn[idx_c] == lat_bnd_rdn[idx_a]){
 	/* Set flag only if triangle is not degenerate. Degenerate triangles (3 points on a geodesic) have zero area */
 	if(xcs_sph != 0.0) flg_ply_has_smc=flg_tri_crr_smc=True;
-	if(nco_dbg_lvl_get() >= nco_dbg_io) (void)fprintf(stdout,"%s: DEBUG Found small circle triangle with vertices A, B, C at (lat,lon) [dgr] = (%g, %g), (%g, %g), (%g, %g)\n",nco_prg_nm_get(),lat_bnd[idx_a],lon_bnd[idx_a],lat_bnd[idx_b],lon_bnd[idx_b],lat_bnd[idx_c],lon_bnd[idx_c]);
+	//if(nco_dbg_lvl_get() >= nco_dbg_io) (void)fprintf(stdout,"%s: DEBUG Found small circle triangle with vertices A, B, C at (lat,lon) [dgr] = (%g, %g), (%g, %g), (%g, %g)\n",nco_prg_nm_get(),lat_bnd[idx_a],lon_bnd[idx_a],lat_bnd[idx_b],lon_bnd[idx_b],lat_bnd[idx_c],lon_bnd[idx_c]);
       } /* endif */
       if((edg_typ == nco_edg_smc) && flg_tri_crr_smc){
 	double ngl_plr; /* [rdn] Polar angle (co-latitude) */
@@ -5733,16 +5733,16 @@ nco_sph_plg_area /* [fnc] Compute area of spherical polygon */
 	  (void)fprintf(stdout,"%s: Latitude-triangle area using series approximation...not implemented yet\n",nco_prg_nm_get());
 	} /* !0 */
 	if(nco_dbg_lvl_get() >= nco_dbg_scl){
-	  (void)fprintf(stdout,"%s: INFO %s col_idx = %li triangle %d spherical area, latitude-triangle area, %% difference: %g, %g, %g%%\n",nco_prg_nm_get(),fnc_nm,col_idx,tri_idx,xcs_sph,xcs_sph+area_smc_crc,100.0*area_smc_crc/xcs_sph);
+	  //(void)fprintf(stdout,"%s: INFO %s col_idx = %li triangle %d spherical area, latitude-triangle area, %% difference: %g, %g, %g%%\n",nco_prg_nm_get(),fnc_nm,col_idx,tri_idx,xcs_sph,xcs_sph+area_smc_crc,100.0*area_smc_crc/xcs_sph);
 	  if(fabs(area_smc_crc/xcs_sph) > 0.1){
-	    (void)fprintf(stdout,"%s: DEBUG Non-spherical correction exceeds 10%% for current triangle with vertices A, B, C at (lat,lon) [dgr] = (%g, %g), (%g, %g), (%g, %g)\n",nco_prg_nm_get(),lat_bnd[idx_ltr_a],lon_bnd[idx_ltr_a],lat_bnd[idx_ltr_b],lon_bnd[idx_ltr_b],lat_bnd[idx_ltr_c],lon_bnd[idx_ltr_c]);
+	    //(void)fprintf(stdout,"%s: DEBUG Non-spherical correction exceeds 10%% for current triangle with vertices A, B, C at (lat,lon) [dgr] = (%g, %g), (%g, %g), (%g, %g)\n",nco_prg_nm_get(),lat_bnd[idx_ltr_a],lon_bnd[idx_ltr_a],lat_bnd[idx_ltr_b],lon_bnd[idx_ltr_b],lat_bnd[idx_ltr_c],lon_bnd[idx_ltr_c]);
 	  } /* !fabs */
 	} /* !dbg */
       } /* !edg_typ && flg_tri_crr_smc */
     } /* !tri_idx */
     if(edg_typ == nco_edg_smc && flg_ply_has_smc){
       /* Current gridcell contained at least one latitude-triangle */
-      if(nco_dbg_lvl_get() >= nco_dbg_scl) (void)fprintf(stdout,"%s: INFO %s col_idx = %li spherical area, latitude-gridcell area, %% difference: %g, %g, %g%%\n",nco_prg_nm_get(),fnc_nm,col_idx,area[col_idx],area_smc,100.0*(area_smc-area[col_idx])/area[col_idx]);
+      // if(nco_dbg_lvl_get() >= nco_dbg_scl) (void)fprintf(stdout,"%s: INFO %s col_idx = %li spherical area, latitude-gridcell area, %% difference: %g, %g, %g%%\n",nco_prg_nm_get(),fnc_nm,col_idx,area[col_idx],area_smc,100.0*(area_smc-area[col_idx])/area[col_idx]);
     } /* !edg_typ && !flg_ply_has_smc */    
   } /* !col_idx */
   if(edg_typ == nco_edg_smc && nco_dbg_lvl_get() >= nco_dbg_scl) (void)fprintf(stdout,"%s: INFO %s total spherical area, latitude-gridcell area, %% difference, crc_ttl, crc_abs_ttl: %g, %g, %g%%, %g, %g\n",nco_prg_nm_get(),fnc_nm,area_ttl,area_smc_ttl,100.0*(area_smc_ttl-area_ttl)/area_ttl,area_smc_crc_ttl,area_smc_crc_abs_ttl);
@@ -9518,7 +9518,7 @@ nco_lon_dff_brnch_dgr /* [fnc] Subtract longitudes with branch-cut rules */
   const char fnc_nm[]="nco_lon_dff_brnch_dgr()";
   const double lon_dff=lon_r-lon_l; /* [dgr] Longitude difference (lon_r-lon_l) */
   if(lon_dff >= 180.0){
-    (void)fprintf(stdout,"%s: WARNING %s reports lon_r, lon_l, lon_dff = %g, %g, %g\n",nco_prg_nm_get(),fnc_nm,lon_r,lon_l,lon_dff);
+    //(void)fprintf(stdout,"%s: WARNING %s reports lon_r, lon_l, lon_dff = %g, %g, %g\n",nco_prg_nm_get(),fnc_nm,lon_r,lon_l,lon_dff);
     return lon_dff-360.0;
   }else if(lon_dff <= -180.0){
     return lon_dff+360.0;
@@ -9540,10 +9540,10 @@ nco_lon_dff_brnch_rdn /* [fnc] Subtract longitudes with branch-cut rules */
   //nco_bool dbg_prn=False; /* [flg] Print warning when longitude difference is suspicious */
   /* longitudes on different branch cuts are expected when computing polygon area, so warn only if requested with high debugging level */
   if(lon_dff >= M_PI){
-    if(nco_dbg_lvl_get() >= nco_dbg_crr) (void)fprintf(stdout,"%s: WARNING %s reports lon_r, lon_l, lon_dff = %g, %g, %g\n",nco_prg_nm_get(),fnc_nm,lon_r,lon_l,lon_dff);
+    //if(nco_dbg_lvl_get() >= nco_dbg_crr) (void)fprintf(stdout,"%s: WARNING %s reports lon_r, lon_l, lon_dff = %g, %g, %g\n",nco_prg_nm_get(),fnc_nm,lon_r,lon_l,lon_dff);
     return lon_dff-M_PI-M_PI;
   }else if(lon_dff <= -M_PI){
-    if(nco_dbg_lvl_get() >= nco_dbg_crr) (void)fprintf(stdout,"%s: WARNING %s reports lon_r, lon_l, lon_dff = %g, %g, %g\n",nco_prg_nm_get(),fnc_nm,lon_r,lon_l,lon_dff);
+    //if(nco_dbg_lvl_get() >= nco_dbg_crr) (void)fprintf(stdout,"%s: WARNING %s reports lon_r, lon_l, lon_dff = %g, %g, %g\n",nco_prg_nm_get(),fnc_nm,lon_r,lon_l,lon_dff);
     return lon_dff+M_PI+M_PI;
   } /* !lon_dff */
 

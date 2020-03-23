@@ -832,8 +832,8 @@ nco_msh_mk /* [fnc] Compute overlap mesh and weights */
      (mpf->src_grid_rank == 2 && mpf->dst_grid_rank == 2)) /* Both grids are 2-D */
     {
       /* Use small circle triangles for RLL mapping if user did specify great circles edges */ 
-      if(rgr->edg_typ == nco_edg_nil) rgr->edg_typ=nco_edg_smc;
-      pl_typ=poly_rll;
+      //if(rgr->edg_typ == nco_edg_nil) rgr->edg_typ=nco_edg_smc;
+      pl_typ=poly_sph;
     }else{
       if(rgr->edg_typ == nco_edg_nil) rgr->edg_typ=nco_edg_gtc;
       pl_typ=poly_sph;

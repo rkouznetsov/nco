@@ -4687,7 +4687,7 @@ nco_rgr_wgt /* [fnc] Regrid with external weights */
 # endif /* 900 */
 #endif /* !__GNUC__ */
 #if defined( __INTEL_COMPILER)
-# pragma omp parallel for default(none) firstprivate(dmn_cnt_in,dmn_cnt_out,dmn_srt,dmn_id_in,dmn_id_out,tally,var_val_dbl_in,var_val_dbl_out,wgt_vld_out) private(dmn_idx,dmn_nbr_in,dmn_nbr_out,dmn_nbr_max,dst_idx,has_mss_val,idx,idx_in,idx_out,idx_tbl,in_id,lnk_idx,lvl_idx,lvl_nbr,mss_val_dbl,rcd,thr_idx,trv,val_in_fst,val_out_fst,var_id_in,var_id_out,var_nm,var_sz_in,var_sz_out,var_typ_out,var_typ_rgr,var_val_crr) shared(col_src_adr,dmn_nbr_hrz_crd,flg_frc_nrm,flg_rnr,fnc_nm,frc_out,lnk_nbr,out_id,row_dst_adr,sgs_frc_nm,sgs_frc_in,sgs_frc_out,sgs_msk_nm,wgt_raw,wgt_vld_thr,stdout)
+# pragma omp parallel for default(none) firstprivate(dmn_cnt_in,dmn_cnt_out,dmn_srt,dmn_id_in,dmn_id_out,tally,var_val_dbl_in,var_val_dbl_out,wgt_vld_out) private(dmn_idx,dmn_nbr_in,dmn_nbr_out,dmn_nbr_max,dst_idx,has_mss_val,idx,idx_in,idx_out,idx_tbl,in_id,lnk_idx,lvl_idx,lvl_nbr,mss_val_dbl,rcd,thr_idx,trv,val_in_fst,val_out_fst,var_id_in,var_id_out,var_nm,var_sz_in,var_sz_out,var_typ_out,var_typ_rgr,var_val_crr) shared(col_src_adr,dmn_nbr_hrz_crd,flg_frc_nrm,flg_rnr,fnc_nm,frc_out,lnk_nbr,out_id,row_dst_adr,sgs_frc_nm,sgs_frc_in,sgs_frc_out,sgs_msk_nm,wgt_raw,wgt_vld_thr)
 #else /* !__INTEL_COMPILER */
 # ifdef GXX_OLD_OPENMP_SHARED_TREATMENT
 #  pragma omp parallel for default(none) firstprivate(dmn_cnt_in,dmn_cnt_out,dmn_srt,dmn_id_in,dmn_id_out,tally,var_val_dbl_in,var_val_dbl_out,wgt_vld_out) private(dmn_idx,dmn_nbr_in,dmn_nbr_out,dmn_nbr_max,dst_idx,has_mss_val,idx,idx_in,idx_out,idx_tbl,in_id,lnk_idx,lvl_idx,lvl_nbr,mss_val_dbl,rcd,thr_idx,trv,val_in_fst,val_out_fst,var_id_in,var_id_out,var_nm,var_sz_in,var_sz_out,var_typ_out,var_typ_rgr,var_val_crr) shared(col_src_adr,dmn_nbr_hrz_crd,flg_frc_nrm,fnc_nm,frc_out,lnk_nbr,out_id,row_dst_adr,sgs_frc_nm,sgs_frc_in,sgs_frc_out,sgs_msk_nm,wgt_raw)
@@ -4781,48 +4781,32 @@ nco_rgr_wgt /* [fnc] Regrid with external weights */
 	   Pass extensive variable list to NCO with, e.g., --xtn=TSurfStd_ct,...
 	   20190420: Remove languishing, unfinished intensive variable code */
 	  
-	//clock_t tm_srt; /* [us] Microseconds at start */
-	//clock_t tm_end; /* [us] Microseconds at end */
-	//float tm_drn; /* [s] Seconds elapsed */
-	//if(nco_dbg_lvl_get() >= nco_dbg_var) tm_srt=clock();
+	clock_t tm_srt; /* [us] Microseconds at start */
+	clock_t tm_end; /* [us] Microseconds at end */
+	float tm_drn; /* [s] Seconds elapsed */
+	if(nco_dbg_lvl_get() >= nco_dbg_var) tm_srt=clock();
  
-	static double total_time = 0;
-  clock_t tm_srt;
-  clock_t tm_end;
-  float tm_drn;
-  tm_srt = clock();
 	/* This first block is for "normal" variables without sub-gridscale fractions */
 	  if(!sgs_frc_out){
 	  /* Apply weights */
 	  if(!has_mss_val){
 	    if(lvl_nbr == 1){
 	      /* Weight single-level fields without missing values */
-			#define USE_GPU 0
-			#if USE_GPU!=0
-	      #pragma omp target data map(to:col_src_adr[0:lnk_nbr],row_dst_adr[0:lnk_nbr],var_val_dbl_in[0:var_sz_in],wgt_raw[0:lnk_nbr]) map(tofrom:var_val_dbl_out[0:var_sz_out])
-	      #pragma omp target teams distribute parallel for simd schedule(static,1)
-			#endif
+	      //#pragma omp target data map(to:col_src_adr[0:lnk_nbr],row_dst_adr[0:lnk_nbr],var_val_dbl_in[0:var_sz_in],wgt_raw[0:lnk_nbr]) map(tofrom:var_val_dbl_out[0:var_sz_out])
+	      //#pragma omp target teams distribute parallel for simd
 	      for(lnk_idx=0;lnk_idx<lnk_nbr;lnk_idx++)
 		var_val_dbl_out[row_dst_adr[lnk_idx]]+=var_val_dbl_in[col_src_adr[lnk_idx]]*wgt_raw[lnk_idx];
 	    }else{
 	      val_in_fst=0L;
 	      val_out_fst=0L;
 	      /* Weight multi-level fields without missing values */
-			#if USE_GPU!=0 
-	      #pragma omp target data map(to:col_src_adr[0:lnk_nbr],row_dst_adr[0:lnk_nbr],var_val_dbl_in[0:var_sz_in],wgt_raw[0:lnk_nbr]) map(tofrom:var_val_dbl_out[0:var_sz_out])
-	      #pragma omp parallel for reduction(+:val_in_fst,val_out_fst)
-		  	#endif
+	      //#pragma omp target data map(to:col_src_adr[0:lnk_nbr],row_dst_adr[0:lnk_nbr],var_val_dbl_in[0:var_sz_in],wgt_raw[0:lnk_nbr]) map(tofrom:var_val_dbl_out[0:var_sz_out])
+	      //#pragma omp parallel for reduction(+:val_in_fst,val_out_fst)
 	      for(lvl_idx=0;lvl_idx<lvl_nbr;lvl_idx++){
 		//if(nco_dbg_lvl_get() >= nco_dbg_crr) (void)fprintf(fp_stdout,"%s lvl_idx = %d val_in_fst = %li, val_out_fst = %li\n",trv.nm,lvl_idx,val_in_fst,val_out_fst);
-			#if USE_GPU!=0 
-		#pragma omp target teams distribute parallel for simd schedule(static,1)
-			#endif
+		//#pragma omp target teams distribute parallel for simd
 		for(lnk_idx=0;lnk_idx<lnk_nbr;lnk_idx++)
 		  var_val_dbl_out[row_dst_adr[lnk_idx]+val_out_fst]+=var_val_dbl_in[col_src_adr[lnk_idx]+val_in_fst]*wgt_raw[lnk_idx];
-		tm_end = clock();
-  	tm_drn = (float)(tm_end - tm_srt)/CLOCKS_PER_SEC;
-  	total_time += tm_drn;
- 		fprintf(stdout, "Total processing took %gs seconds to run\n", total_time);
 		val_in_fst+=grd_sz_in;
 		val_out_fst+=grd_sz_out;
 	      } /* !lvl_idx */
